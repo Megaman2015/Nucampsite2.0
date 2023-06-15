@@ -2,23 +2,24 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
 function Loading() {
     return (
-        <View style={StyleSheet.loadingVeiw}>
+        <View style={styles.loadingView}>
             <ActivityIndicator size="large" color="#5637DD" />
-            <Text style={StyleSheet.loadingText}>One Second....</Text>
+            <Text style={styles.loadingText}>Loading . . .</Text>
         </View>
     );
 }
 
-const style = StyleSheet.create({
-    loadingVeiw: {
+const styles = StyleSheet.create({
+    loadingView: {
         alignItems: "center",
         justifyContent: "center",
         flex: 1,
     },
     loadingText: {
-        color: "#567DD",
+        color: "#5637DD",
         fontSize: 14,
         fontWeight: "bold",
     },
 });
+
 export default Loading;
