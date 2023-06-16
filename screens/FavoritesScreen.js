@@ -1,6 +1,3 @@
-import { Avatar, ListItem } from "react-native-elements";
-import Loading from "../components/LoadingComponent";
-import { baseUrl } from "../shared/baseUrl";
 import { useDispatch, useSelector } from "react-redux";
 import {
     View,
@@ -10,8 +7,12 @@ import {
     StyleSheet,
     Alert,
 } from "react-native";
-import { SwipeListView, SwipeRow } from "react-native-swipe-list-view";
+import { Avatar, ListItem } from "react-native-elements";
+import Loading from "../components/LoadingComponent";
+import { baseUrl } from "../shared/baseUrl";
+import { SwipeRow } from "react-native-swipe-list-view";
 import { toggleFavorite } from "../features/favorites/favoritesSlice";
+import * as Animatable from "react-native-animatable";
 
 const FavoritesScreen = ({ navigation }) => {
     const { campsitesArray, isLoading, errMess } = useSelector(
@@ -23,21 +24,40 @@ const FavoritesScreen = ({ navigation }) => {
     const renderFavoriteItem = ({ item: campsite }) => {
         return (
             <SwipeRow rightOpenValue={-100}>
-                <View style={StyleSheet.deletView}>
+                <View style={styles.deleteView}>
                     <TouchableOpacity
                         style={styles.deleteTouchable}
                         onPress={() =>
                             Alert.alert(
                                 "Delete Favorite?",
-                                "Are you sure you wish to delete the favorite campsitej"
+                                "Are you sure you wish to delete the favorite campsite " +
+                                    campsite.name +
+                                    "?",
+                                [
+                                    {
+                                        text: "Cancel",
+                                        onPress: () =>
+                                            console.log(
+                                                campsite.name + "Not Deleted"
+                                            ),
+                                        style: "cancel",
+                                    },
+                                    {
+                                        text: "OK",
+                                        onPress: () =>
+                                            dispatch(
+                                                toggleFavorite(campsite.id)
+                                            ),
+                                    },
+                                ],
+                                { cancelable: false }
                             )
                         }
                     >
-                        <Text style={sytles.deleteText}>Delete</Text>
+                        <Text style={styles.deleteText}>Delete</Text>
                     </TouchableOpacity>
                 </View>
                 <View>
-                    {" "}
                     <ListItem
                         onPress={() =>
                             navigation.navigate("Directory", {
@@ -73,17 +93,20 @@ const FavoritesScreen = ({ navigation }) => {
         );
     }
     return (
-        <FlatList
-            data={campsitesArray.filter((campsite) =>
-                favorites.includes(campsite.id)
-            )}
-            renderItem={renderFavoriteItem}
-            keyExtractor={(item) => item.id.toString()}
-        />
+        <Animatable.View animation="fadeInRightBig" duration={2000}>
+            <FlatList
+                data={campsitesArray.filter((campsite) =>
+                    favorites.includes(campsite.id)
+                )}
+                renderItem={renderFavoriteItem}
+                keyExtractor={(item) => item.id.toString()}
+            />
+        </Animatable.View>
     );
 };
-const sytles = StyleSheet.create({
-    deletView: {
+
+const styles = StyleSheet.create({
+    deleteView: {
         flexDirection: "row",
         justifyContent: "flex-end",
         alignItems: "center",
@@ -96,7 +119,7 @@ const sytles = StyleSheet.create({
     },
     deleteText: {
         color: "white",
-        fontweight: "700",
+        fontWeight: "700",
         textAlign: "center",
         fontSize: 16,
         width: 100,
